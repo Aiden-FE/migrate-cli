@@ -42,7 +42,7 @@ export async function checkCliUpdate(): Promise<void> {
     });
 
     const latestVersion = await checkUpdate(packageName, currentVersion);
-    
+
     if (latestVersion) {
       spinner.warn({
         text: `发现新版本 ${latestVersion}，当前版本 ${currentVersion}`,

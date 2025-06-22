@@ -1,7 +1,7 @@
 {
   "name": "@compass-aiden/migrate-cli",
   "description": "DB迁移工具",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "type": "module",
   "main": "index.js",
   "bin": {
