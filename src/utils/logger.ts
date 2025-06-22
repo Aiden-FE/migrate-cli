@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import ora from 'ora';
+import { createSpinner } from 'nanospinner';
 
 export default class Logger {
   static log(...args: unknown[]): void {
@@ -28,6 +29,10 @@ export default class Logger {
   }
 
   static createLoading() {
+    return createSpinner();
+  }
+
+  static createSpinner() {
     return ora();
   }
 }

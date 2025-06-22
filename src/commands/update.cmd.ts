@@ -13,7 +13,7 @@ export default (program: Command) => {
     .command('update')
     .description('检查是否存在新版本CLI')
     .action(async () => {
-      const loading = Logger.createLoading();
+      const loading = Logger.createSpinner();
       loading.start(chalk.cyan('正在检查版本信息'));
       try {
         const latestVersion = await checkUpdate(name, version);
@@ -37,7 +37,7 @@ export default (program: Command) => {
             { name: 'pnpm', value: 'pnpm' },
           ],
         });
-        const updateLoading = Logger.createLoading();
+        const updateLoading = Logger.createSpinner();
         updateLoading.start(chalk.cyan('开始更新cli'));
         execSync(`${pkgManager} add ${name} -g`, { stdio: 'inherit' });
         updateLoading.succeed(chalk.green('更新成功,当前已是最新版本.'));
