@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { createFileSync, createFolder } from '@compass-aiden/helpers/cjs';
-import { Logger, getConfig } from '@/utils';
+import { Logger, getConfig, checkCliUpdate } from '@/utils';
 
 // migrate create -n <name>
 export default (program: Command) => {
@@ -12,6 +12,9 @@ export default (program: Command) => {
     .option('-n, --name <name>', '迁移任务名称')
     .option('-c, --config <config>', '配置文件路径')
     .action(async (options) => {
+      // 检查版本更新
+      await checkCliUpdate();
+
       if (!options.name || !/^[a-z]+(-[a-z]+)*$/.test(options.name)) {
         Logger.error('迁移名称错误,名称应该由小写字母组成,多个单词采用 - 连接', 'Migration');
         process.exit(1);

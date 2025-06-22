@@ -1,4 +1,4 @@
-import { getConfig, Logger, getEnv, DBConnector } from '@/utils';
+import { getConfig, Logger, getEnv, DBConnector, checkCliUpdate } from '@/utils';
 import { Command } from 'commander';
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
@@ -10,6 +10,9 @@ export default (program: Command) => {
     .option('-c, --config <config>', '配置文件路径')
     .option('-A, --all', '回滚所有任务')
     .action(async (options) => {
+      // 检查版本更新
+      await checkCliUpdate();
+
       const { dir = 'migrations', dbType = 'postgres', envFilePath = '.env' } = getConfig(options.config);
       if (!existsSync(dir)) {
         Logger.error('迁移任务文件夹不存在,没有可回滚任务');

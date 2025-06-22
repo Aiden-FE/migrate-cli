@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { DBConnector, getConfig, getEnv, Logger } from '@/utils';
+import { DBConnector, getConfig, getEnv, Logger, checkCliUpdate } from '@/utils';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -9,6 +9,9 @@ export default (program: Command) => {
     .description('执行迁移任务')
     .option('-c, --config <config>', '配置文件路径')
     .action(async (options) => {
+      // 检查版本更新
+      await checkCliUpdate();
+
       const { dir = 'migrations', dbType = 'postgres', envFilePath = '.env' } = getConfig(options.config);
       if (!existsSync(dir)) {
         Logger.error('迁移任务文件夹不存在,请先创建迁移任务');

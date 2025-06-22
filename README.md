@@ -49,7 +49,7 @@ migrate <command> -h
 ```json
 {
   "dir": "migrations", // 迁移文件所在目录，默认为 migrations
-  "dbType": "postgres", // 数据库类型，目前支持 postgres,mysql
+  "dbType": "postgres", // 数据库类型，默认为 postgres，目前支持 postgres,mysql
   "envFilePath": ".env" // 环境文件位置，默认为 .env
 }
 ```
