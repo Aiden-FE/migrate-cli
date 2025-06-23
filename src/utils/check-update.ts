@@ -1,8 +1,6 @@
 import { compareVersion } from '@compass-aiden/helpers/cjs';
 import { getRepoInfoFromNpm } from '@/http';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { execSync } from 'node:child_process';
 import Logger from './logger';
 
 /**
@@ -28,12 +26,8 @@ export default async function checkUpdate(npmLibName: string, currentVersion: st
  */
 export async function checkCliUpdate(): Promise<void> {
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
-    const packageJsonPath = join(__dirname, '../../../package.json');
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-    const currentVersion = packageJson.version;
-    const packageName = packageJson.name;
+    const currentVersion = execSync('migrate -v', { encoding: 'utf-8' }).trim().replace('v', '');
+    const packageName = '@compass-aiden/migrate-cli';
 
     const spinner = Logger.createLoading();
     spinner.start({
@@ -47,14 +41,12 @@ export async function checkCliUpdate(): Promise<void> {
       spinner.warn({
         text: `发现新版本 ${latestVersion}，当前版本 ${currentVersion}`,
       });
-      Logger.warn('建议更新到最新版本以获得最佳体验');
-      Logger.warn(`运行以下命令更新: npm install -g ${packageName}@latest`);
+      Logger.warn('建议更新到最新版本以获得最佳体验, 运行以下命令更新:\n\tmigrate update');
     } else {
-      spinner.success({
-        text: 'CLI已是最新版本',
-      });
+      spinner.stop();
     }
   } catch (error) {
+    Logger.error(error);
     Logger.warn('CLI版本检查失败，继续执行任务');
   }
 }

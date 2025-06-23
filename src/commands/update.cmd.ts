@@ -1,9 +1,8 @@
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { confirm, select } from '@inquirer/prompts';
 import { Logger, checkUpdate } from '@/utils';
-import { version, name } from '../../package.json';
 
 /**
  * @description 检查Compass CLI是否存在新版本内容
@@ -13,15 +12,23 @@ export default (program: Command) => {
     .command('update')
     .description('检查是否存在新版本CLI')
     .action(async () => {
-      const loading = Logger.createSpinner();
-      loading.start(chalk.cyan('正在检查版本信息'));
+      const loading = Logger.createLoading();
+      loading.start({
+        text: chalk.cyan('正在检查版本信息'),
+      });
       try {
-        const latestVersion = await checkUpdate(name, version);
+        const packageName = '@compass-aiden/migrate-cli';
+        const currentVersion = execSync('migrate -v', { encoding: 'utf-8' }).trim().replace('v', '');
+        const latestVersion = await checkUpdate(packageName, currentVersion);
         if (!latestVersion) {
-          Logger.success('当前已是最新版本');
+          loading.success({
+            text: chalk.green('当前已是最新版本'),
+          });
           return;
         }
-        loading.warn(chalk.yellow(`发现新版本: ${latestVersion}`));
+        loading.update({
+          text: chalk.yellow(`发现新版本: ${latestVersion}`),
+        });
         const isUpdate = await confirm({
           message: '是否立即更新',
           default: true,
@@ -37,13 +44,18 @@ export default (program: Command) => {
             { name: 'pnpm', value: 'pnpm' },
           ],
         });
-        const updateLoading = Logger.createSpinner();
-        updateLoading.start(chalk.cyan('开始更新cli'));
-        execSync(`${pkgManager} add ${name} -g`, { stdio: 'inherit' });
-        updateLoading.succeed(chalk.green('更新成功,当前已是最新版本.'));
+        loading.update({
+          text: chalk.cyan('开始更新cli'),
+        });
+        execSync(`${pkgManager} add ${packageName} -g`, { stdio: 'inherit' });
+        loading.success({
+          text: chalk.green('更新成功,当前已是最新版本.'),
+        });
       } catch (err) {
         Logger.log(err);
-        loading.fail(chalk.red('更新失败'));
+        loading.error({
+          text: chalk.red('更新失败'),
+        });
       }
     });
 };

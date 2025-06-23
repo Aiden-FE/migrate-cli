@@ -53,13 +53,9 @@ export default (program: Command) => {
       // 当数据库中不存在 migrations 表时，创建 migrations 表
       await dbConnector.db.checkMigrationsTable();
 
-      // 检查任务是否已执行
-      async function checkTaskExecuted(taskName: string) {
-        return await dbConnector.db.checkTaskExecuted(taskName);
-      }
-
       async function executeTask(taskName: string) {
-        if (await checkTaskExecuted(taskName)) {
+        // 检查任务是否已执行
+        if (await dbConnector.db.checkTaskExecuted(taskName)) {
           return;
         }
         const sqlContent = readFileSync(join(dir, taskName, 'main.sql'), 'utf-8').trim();
@@ -76,9 +72,11 @@ export default (program: Command) => {
           color: 'cyan',
         });
       }
+      const promises = [];
       for (const taskName of dirs) {
-        await executeTask(taskName);
+        promises.push(executeTask(taskName));
       }
+      await Promise.all(promises);
       spinner.update({
         text: '任务执行完成，断开数据库连接...',
         color: 'cyan',

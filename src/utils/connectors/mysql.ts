@@ -6,14 +6,42 @@ export default class MySQLConnector extends Client {
 
   constructor(private options: MySQLConnectorOptions['connection']) {
     super();
-    // 连接字符串需要提供multipleStatements=true
-    createConnection(this.options as ConnectionOptions).then((connection) => {
+
+    let connectionOptions: ConnectionOptions | string;
+
+    if (typeof this.options === 'string') {
+      // 如果是连接字符串，需要添加 multipleStatements 参数
+      const url = new URL(this.options);
+      url.searchParams.set('multipleStatements', 'true');
+      connectionOptions = url.toString();
+    } else {
+      // 如果是对象配置，直接添加 multipleStatements
+      connectionOptions = {
+        ...this.options,
+        multipleStatements: true,
+      };
+    }
+
+    createConnection(connectionOptions as ConnectionOptions).then((connection) => {
       this.client = connection;
-      this.client.config.multipleStatements = true;
+    });
+  }
+
+  private async onReady() {
+    return new Promise((resolve) => {
+      const check = () => {
+        if (this.client) {
+          resolve(true);
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
     });
   }
 
   async connect(): Promise<void> {
+    await this.onReady();
     await this.client.connect();
   }
 
@@ -50,10 +78,10 @@ export default class MySQLConnector extends Client {
 
   async checkTaskExecuted(taskName: string): Promise<boolean> {
     const checkSQL = `
-        SELECT COUNT(*) FROM migrations WHERE name = ?;
+        SELECT COUNT(*) as count FROM migrations WHERE name = ?;
       `;
     const [result] = await this.client.query(checkSQL, [taskName]);
-    return !!(result as any)?.[0];
+    return (result as any)?.[0]?.count > 0;
   }
 
   async updateTask(taskName: string, type: 'INSERT' | 'DELETE'): Promise<void> {
