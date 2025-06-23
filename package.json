@@ -1,6 +1,6 @@
 {
   "name": "@compass-aiden/migrate-cli",
-  "description": "DB迁移工具",
+  "description": "数据库迁移工具 - 支持多种数据库的版本管理CLI工具",
   "version": "0.0.3",
   "type": "module",
   "main": "index.js",
@@ -11,19 +11,24 @@
     "dist",
     "index.js"
   ],
-  "author": "",
-  "repository": "",
+  "author": "Aiden <aiden_jin@outlook.com>",
+  "repository": "https://github.com/Aiden-FE/migrate-cli",
+  "homepage": "https://github.com/Aiden-FE/migrate-cli/blob/master/README.md",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "keywords": [
-    "commander",
-    "command-line",
-    "commandline",
+    "nodejs",
     "terminal",
-    "cli"
+    "mysql",
+    "schema-migrations",
+    "postgres",
+    "command-line",
+    "database-migrations",
+    "cli-tool",
+    "database-versioning"
   ],
   "scripts": {
     "dev": "rollup -w -c rollup.config.js",

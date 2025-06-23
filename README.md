@@ -1,6 +1,6 @@
 # @compass-aiden/migrate-cli
 
-> 数据库迁移工具 - 支持PostgreSQL、MySQL等多种数据库的版本管理CLI工具
+> 数据库迁移工具 - 支持多种数据库的版本管理CLI工具
 
 ## 功能特性
 

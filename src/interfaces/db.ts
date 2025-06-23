@@ -16,7 +16,7 @@ export type DBConnectorOptions = PostgresConnectorOptions | MySQLConnectorOption
 export abstract class BaseClient {
   abstract connect(): Promise<void>;
   abstract disconnect(): Promise<void>;
-  abstract execute(sql: string, params?: any[]): Promise<any>;
+  abstract query(sql: string, params?: any[]): Promise<any>;
   abstract transaction(callback: (client: unknown) => Promise<void>): Promise<void>;
   abstract checkMigrationsTable(): Promise<void>;
   abstract checkTaskExecuted(taskName: string): Promise<boolean>;

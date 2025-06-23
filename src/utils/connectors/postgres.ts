@@ -19,7 +19,7 @@ export default class PostgresConnector extends Client {
     await this.client.end();
   }
 
-  async execute(sql: string, params?: any[]): Promise<any> {
+  async query(sql: string, params?: any[]): Promise<any> {
     return this.client.query(sql, params);
   }
 

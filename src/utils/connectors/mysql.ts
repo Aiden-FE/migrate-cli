@@ -49,8 +49,8 @@ export default class MySQLConnector extends Client {
     await this.client.end();
   }
 
-  async execute(sql: string, params?: any[]): Promise<any> {
-    return this.client.execute(sql, params);
+  async query(sql: string, params?: any[]): Promise<any> {
+    return this.client.query(sql, params);
   }
 
   async transaction(callback: (connection: Connection) => Promise<void>) {
